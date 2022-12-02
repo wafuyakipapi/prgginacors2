@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+    <head>        
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Web Map</title>
+
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+   
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"/>
+        <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css"/>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
+
+        <link rel="stylesheet" type="text/css" href="plugin/leaflet.defaultextent.css">
+        <script src="plugin/leaflet.defaultextent.js"></script>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+        <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+
+        <script src="data/CORS_30.js"></script>
+        <script src="data/CORS_50.js"></script>
+        <script src="data/jogja.js"></script>
+
+        <style>
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 85%;
+            padding: 0;
+            margin: 0;
+        }
+
+        </style>
+   
+    </head>
+    
+    <body>
+        <!-- Navigation-->
+        <header class="site-header">
+            <div class="site-identity">
+              <a><img src="https://luk.staff.ugm.ac.id/logo/UGM/Resmi/Hitam-putih.gif" alt="Peta Ketersediaan Layanan InaCORS" /></a>
+              <h1><a href="#" class="judul">Peta Ketersediaan Layanan InaCORS</a></h1>
+            </div>  
+            <nav class="site-navigation">
+              <ul class="nav">
+                <li><a>September-Oktober 2022</a></li> 
+              </ul>
+            </nav>
+          </header>
+
+        <!-- Web Map -->
+
+            <div id='map'></div>
+    
+                    <script> 
+            
+                        var map = L.map('map', {
+                            center: [-1.933227, 117.333984],
+                            zoom: 5,
+                        });
+                        
+                        var peta1 = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                        id: 'mapbox/streets-v11'
+                        }).addTo(map);
+            
+                        var esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                        });
+            
+                        var carto = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}{r}.png', {attribution:'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>&copy; <a href="http://cartodb.com/attributions">CartoDB</a>', 
+                        subdomains: 'abcd', 
+                        maxZoom: '19'
+                        });
+            
+            
+                        var baseMaps = {
+                            "Light": peta1,
+                            "Dark": carto,
+                            "Satellite": esri,
+                        };          
+                        
+                        //all//
+                        var allCORS30 = 
+                        L.geoJSON(CORS30geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            }).addTo(map);
+
+                        var allCORS50 = L.geoJSON(CORS50geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            }).addTo(map);
+
+                       //M1//
+                       var M1CORS30 = 
+                        L.geoJSON(CORS30geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        var M1CORS50 = L.geoJSON(CORS50geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        //M2// 
+                        var M2CORS30 = L.geoJSON(CORS30geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        var M2CORS50 = L.geoJSON(CORS50geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                         //M3// 
+                         var M3CORS30 = L.geoJSON(CORS30geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        var M3CORS50 = L.geoJSON(CORS50geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        //M4// 
+                        var M4CORS30 = L.geoJSON(CORS30geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        var M4CORS50 = L.geoJSON(CORS50geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        //M5// 
+                        var M5CORS30 = L.geoJSON(CORS30geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        var M5CORS50 = L.geoJSON(CORS50geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        //M6// 
+                        var M6CORS30 = L.geoJSON(CORS30geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+
+                        var M6CORS50 = L.geoJSON(CORS50geo,{
+                            style: function(feature) {
+                                if (feature.properties.All >= 0.000000 && feature.properties.All <= 0.200000) {
+                                    return {color: "#feebe2"};
+                                } else if (feature.properties.All >= 0.200000 && feature.properties.All <= 0.400000) {
+                                    return {color: "#fbb4b9"};
+                                } else if (feature.properties.All >= 0.400000 && feature.properties.All <= 0.600000) {
+                                    return {color: "#f768a1"};
+                                } else if (feature.properties.All >= 0.600000 && feature.properties.All <= 0.800000) {
+                                    return {color: "#c51b8a"};
+                                } else if (feature.properties.All >= 0.800000 && feature.properties.All <= 1.000000) {
+                                    return {color: "#7a0177"};
+                                }
+                            },
+                            onEachFeature: function (feature, layer) {layer
+                                .bindPopup('CORS dari stasiun ' + '<strong>' + feature.properties.Stasiun +'</strong>' + ' memiliki ketersediaan layanan sebesar ' + '<strong>' + feature.properties.All +'</strong>');
+                            }
+                            });
+
+                        var all = L.layerGroup([allCORS30, allCORS50]);
+                        var M1 = L.layerGroup([M1CORS30, M1CORS50]);
+                        var M2 = L.layerGroup([M2CORS30, M2CORS50]);
+                        var M3 = L.layerGroup([M3CORS30, M3CORS50]);
+                        var M4 = L.layerGroup([M4CORS30, M4CORS50]);
+                        var M5 = L.layerGroup([M5CORS30, M5CORS50]);
+                        var M6 = L.layerGroup([M6CORS30, M6CORS50]);
+                       
+                        var overlayMaps = {
+                        "Ketersediaan Akumulasi <br> (Minggu 1 s.d. Minggu 6)": all,
+                        "Ketersediaan Minggu 1" : M1,
+                        "Ketersediaan Minggu 2" : M2,
+                        "Ketersediaan Minggu 3" : M3,
+                        "Ketersediaan Minggu 4" : M4,
+                        "Ketersediaan Minggu 5" : M5,
+                        "Ketersediaan Minggu 6" : M6,
+                        };
+
+                        var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+                        var extent = L.control.defaultExtent().addTo(map);
+            
+                        var geocoder = L.Control.geocoder({
+                        position: 'topleft'
+                        }).addTo(map);
+            
+                        var geolocate = L.control.locate().addTo(map);
+            
+                        var scale = L.control.scale().addTo(map);
+            
+                        var popup = L.popup();
+                        function onMapClick(e) {
+                        popup
+                            .setLatLng(e.latlng)
+                            .setContent("Koordinat pada lokasi ini adalah " + e.latlng.toString())
+                            .openOn(map);
+                        }
+                        map.on('click', onMapClick);
+
+                        /*Legend specific*/
+                        var legend = L.control({ position: "bottomleft" });
+
+                        legend.onAdd = function(map) {
+                        var div = L.DomUtil.create("div", "legend");
+                        div.innerHTML += "<h4><b>Ketersediaan Layanan</b></h4>";
+                        div.innerHTML += '<i style="background: #feebe2"></i><span>0 - 20%</span><br>';
+                        div.innerHTML += '<i style="background: #fbb4b9"></i><span>20 - 40%</span><br>';
+                        div.innerHTML += '<i style="background: #f768a1"></i><span>40 - 60%</span><br>';
+                        div.innerHTML += '<i style="background: #c51b8a"></i><span>60 - 80%</span><br>';
+                        div.innerHTML += '<i style="background: #7a0177"></i><span>80 - 100%</span><br>';                             
+
+                        return div;
+                        };
+
+                        legend.addTo(map);
+            
+                        </script>
+            
+            <!-- Footer-->
+            <footer>
+                <p>data diakuisisi tanggal 11 September s. d 21 Oktober 2022</p>
+            </footer>
+    </body>
+</html>
